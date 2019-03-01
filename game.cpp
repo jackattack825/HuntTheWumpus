@@ -223,7 +223,7 @@ void Game::shootArrow() {
 		break;
 	case 3:
 		for (int i = 0; i < 3; i++) {
-			if (this->currX + i < this->length && rooms.at(this->currX +i).at(this->currY).isWumpus()) {
+			if (this->currX - i < this->length && rooms.at(this->currX -i).at(this->currY).isWumpus()) {
 				this->wumpusAlive = false;
 				cout << "You have killed the wumpus, now find the gold and escape" << endl;
 			}
@@ -231,7 +231,7 @@ void Game::shootArrow() {
 		break;
 	case 4:
 		for (int i = 0; i < 3; i++) {
-			if (this->currX - i >= 0 && rooms.at(this->currX -i).at(this->currY).isWumpus()) {
+			if (this->currX + i >= 0 && rooms.at(this->currX +i).at(this->currY).isWumpus()) {
 				this->wumpusAlive = false;
 				cout << "You have killed the wumpus, now find the gold and escape" << endl;
 			}
@@ -256,6 +256,8 @@ void Game::shootArrow() {
 			rooms.at(tempX).at(tempY).setEvent(new Wumpus);
 		}
 	}
+
+	this->arrows--;
 }
 
 /*********************************************************************
