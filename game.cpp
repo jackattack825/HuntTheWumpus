@@ -55,6 +55,9 @@ Game::Game(int len) {
 		currY = rand() % this->length;
 	}
 
+	startX = currX;
+	startY = currY;
+
 	this->runGame();
 }
 
@@ -80,7 +83,9 @@ void Game::runGame() {
 	}
 	if (this->endOfGame)
 		endGame(2);
-	while (this->currX != this->startX && this->currY != this->startY && !this->endOfGame) {
+	while (!this->endOfGame) {
+		if (this->currX == this->startX && this->currY == this->startY)
+			break;
 		cout << "Return to your starting room to escape" << endl;
 		drawMap();
 		takeTurn();
@@ -203,13 +208,14 @@ void Game::shootArrow() {
 	int res = 0;
 	cout << "You have chosen to shoot an arrow! Now choose a direction: North(3), South(4), East(1), West(2)" << endl;
 	cin >> res;
-
+	Room r;
 	switch (res) {
 	case 1:
 		for (int i = 0; i < 3; i++) {
 			if (this->currY + i < this->length && rooms.at(this->currX).at(this->currY +i).isWumpus()) {
 				this->wumpusAlive = false;
 				cout << "You have killed the wumpus, now find the gold and escape" << endl;
+				rooms.at(currX).at(currY + i) = r;
 			}
 		}
 		break;
@@ -218,6 +224,7 @@ void Game::shootArrow() {
 			if (this->currY - i >= 0 && rooms.at(this->currX).at(this->currY -i).isWumpus()) {
 				this->wumpusAlive = false;
 				cout << "You have killed the wumpus, now find the gold and escape" << endl;
+				rooms.at(currX).at(currY - i) = r;
 			}
 		}
 		break;
@@ -226,6 +233,7 @@ void Game::shootArrow() {
 			if (this->currX - i < this->length && rooms.at(this->currX -i).at(this->currY).isWumpus()) {
 				this->wumpusAlive = false;
 				cout << "You have killed the wumpus, now find the gold and escape" << endl;
+				rooms.at(currX -i).at(currY) = r;
 			}
 		}
 		break;
@@ -234,6 +242,7 @@ void Game::shootArrow() {
 			if (this->currX + i >= 0 && rooms.at(this->currX +i).at(this->currY).isWumpus()) {
 				this->wumpusAlive = false;
 				cout << "You have killed the wumpus, now find the gold and escape" << endl;
+				rooms.at(currX +i).at(currY) = r;
 			}
 		}
 		break;
