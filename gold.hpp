@@ -21,6 +21,7 @@ public:
 	void getPercept();
 	int encounter();
 	bool isWumpus();
+	int getType();
 };
 
 #endif

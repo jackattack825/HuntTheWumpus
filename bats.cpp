@@ -8,7 +8,6 @@
 #include "bats.hpp"
 #include "event.hpp"
 
-
 using namespace std;
 
 /*********************************************************************
@@ -53,4 +52,15 @@ bool Bat::isWumpus() {
 *********************************************************************/
 int Bat::encounter() {
 	return 3;
+}
+
+/*********************************************************************
+** Function: getType
+** Description: returns type
+** Parameters: n/a
+** Pre-Conditions: n/a
+** Post-Conditions: n/a
+*********************************************************************/
+int Bat::getType() {
+	return 0;
 }

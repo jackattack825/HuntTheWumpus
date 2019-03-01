@@ -27,6 +27,7 @@ using namespace std;
 ** Post-Conditions: n/a
 *********************************************************************/
 Game::Game(int len) {
+	this->arrows = 3;
 	this->length = len;
 	for (int i = 0; i < length; i++) {
 		vector<Room> row;
@@ -48,6 +49,11 @@ Game::Game(int len) {
 
 	this->currX = rand() % this->length;
 	this->currY = rand() % this->length;
+
+	while (rooms.at(currX).at(currY).hasEvent()) {
+		currX = rand() % this->length;
+		currY = rand() % this->length;
+	}
 
 	this->runGame();
 }
@@ -92,22 +98,6 @@ void Game::runGame() {
 ** Post-Conditions: n/a
 *********************************************************************/
 void Game::drawMap() {
-	/*
-	for (int i = 0; i < this->length; i++) {
-		cout << "+---+---+---+---+\n";
-		for (int j = 0; j < this->length+1; j++) {
-			if (this->currX == i && this->currY == j)
-				cout << "| * \t";
-			else
-				cout << "| \t";
-			for (int k = 0; k < 3; k++) {
-				cout << "| \t";
-			}
-		}
-	}
-	cout << "+---+---+---+---+\n\n";
-}
-*/
 	for (int i = 0; i < this->length; i++) {
 		cout << endl << "+";
 		for (int j = 0; j < this->length; j++) {
@@ -119,6 +109,21 @@ void Game::drawMap() {
 			if (i == this->currX && j == this->currY) {
 				cout << "X";
 			}
+			if (!rooms.at(i).at(j).isEmpty()) {
+				if (rooms.at(i).at(j).getEvent()->getType() == 0) {		//rpints bats
+					cout << "b";
+				}
+				if (i == this->wumpusX && j == this->wumpusY) {	//prints wumpus
+					cout << "w";
+				}
+				if (rooms.at(i).at(j).getEvent()->getType() == 1) {		//rpints pits
+					cout << "p";
+				}
+				if (rooms.at(i).at(j).getEvent()->getType() == 2) {		//rpints gold
+					cout << "g";
+				}
+			}
+			
 			else {
 				cout << " ";
 			}
@@ -135,6 +140,25 @@ void Game::drawMap() {
 }
 
 /*********************************************************************
+** Function: checkPercepts
+** Description: checks percepts
+** Parameters: n/a
+** Pre-Conditions: n/a
+** Post-Conditions: n/a
+*********************************************************************/
+void Game::checkPercepts() {
+	cout << "New turn! Checking percepts." << endl;
+	if (this->currX + 1 < this->length && rooms.at(this->currX+1).at(this->currY).hasEvent())
+		rooms.at(this->currX + 1).at(this->currY).getEvent()->getPercept();
+	if (this->currX - 1 >= 0 && rooms.at(this->currX-1).at(this->currY).hasEvent())
+		rooms.at(this->currX - 1).at(this->currY).getEvent()->getPercept();
+	if (this->currY + 1 < this->length && rooms.at(this->currX).at(this->currY+1).hasEvent())
+		rooms.at(this->currX).at(this->currY + 1).getEvent()->getPercept();
+	if (this->currY - 1 >= 0 && rooms.at(this->currX).at(this->currY-1).hasEvent())
+		rooms.at(this->currX).at(this->currY - 1).getEvent()->getPercept();
+}
+
+/*********************************************************************
 ** Function: takeTurn
 ** Description: manages turns
 ** Parameters: n/a
@@ -142,19 +166,18 @@ void Game::drawMap() {
 ** Post-Conditions: n/a
 *********************************************************************/
 void Game::takeTurn() {
+	this->checkPercepts();
+
 	int res = 0;
-	cout << "New turn! Checking percepts." << endl;
-	if (this->currX + 1 <= rooms.size() && this->currX + 1 >=0 && this->currY <= rooms.at(currX).size() && rooms.at(this->currX + 1).at(this->currY).hasEvent())
-		rooms.at(this->currX + 1).at(this->currY).getEvent()->getPercept();
-	if (this->currX - 1 <= rooms.size() && this->currX - 1 >= 0 && this->currY <= rooms.at(currX).size() && rooms.at(this->currX - 1).at(this->currY).hasEvent())
-		rooms.at(this->currX - 1).at(this->currY).getEvent()->getPercept();
-	if (this->currX <= rooms.size() && this->currY + 1 <= rooms.at(currX).size() && this->currY + 1 >= 0 && rooms.at(this->currX + 1).at(this->currY).hasEvent())
-		rooms.at(this->currX).at(this->currY + 1).getEvent()->getPercept();
-	if (this->currX <= rooms.size() && this->currY - 1 <= rooms.at(currX).size() && this->currY - 1 >= 0 && rooms.at(this->currX + 1).at(this->currY).hasEvent())
-		rooms.at(this->currX).at(this->currY - 1).getEvent()->getPercept();
+	
 
 	cout << "You can now fire an arrow(1) or move(2)." << endl;
 	cin >> res;
+
+	while (res != 1 && res != 2){
+		cout << "Your input was not a (1) or (2)" << endl;
+		cin >> res;
+	} 
 
 	if (res == 1) {
 		if (arrows >0) {
@@ -184,30 +207,34 @@ void Game::shootArrow() {
 	switch (res) {
 	case 1:
 		for (int i = 0; i < 3; i++) {
-			if (this->currX + i <= rooms.size() && rooms.at(this->currX + i).at(this->currY).isWumpus())
+			if (this->currY + i < this->length && rooms.at(this->currX).at(this->currY +i).isWumpus()) {
 				this->wumpusAlive = false;
-			cout << "You have killed the wumpus, now find the gold and escape" << endl;
+				cout << "You have killed the wumpus, now find the gold and escape" << endl;
+			}
 		}
 		break;
 	case 2:
 		for (int i = 0; i < 3; i++) {
-			if (this->currX - i >=0 && rooms.at(this->currX - i).at(this->currY).isWumpus())
+			if (this->currY - i >= 0 && rooms.at(this->currX).at(this->currY -i).isWumpus()) {
 				this->wumpusAlive = false;
-			cout << "You have killed the wumpus, now find the gold and escape" << endl;
+				cout << "You have killed the wumpus, now find the gold and escape" << endl;
+			}
 		}
 		break;
 	case 3:
 		for (int i = 0; i < 3; i++) {
-			if (this->currY + i <= rooms.at(this->currX).size() && rooms.at(this->currX).at(this->currY + i).isWumpus())
+			if (this->currX + i < this->length && rooms.at(this->currX +i).at(this->currY).isWumpus()) {
 				this->wumpusAlive = false;
-			cout << "You have killed the wumpus, now find the gold and escape" << endl;
+				cout << "You have killed the wumpus, now find the gold and escape" << endl;
+			}
 		}
 		break;
 	case 4:
 		for (int i = 0; i < 3; i++) {
-			if (this->currY - i >= 0 && rooms.at(this->currX).at(this->currY - i).isWumpus())
+			if (this->currX - i >= 0 && rooms.at(this->currX -i).at(this->currY).isWumpus()) {
 				this->wumpusAlive = false;
-			cout << "You have killed the wumpus, now find the gold and escape" << endl;
+				cout << "You have killed the wumpus, now find the gold and escape" << endl;
+			}
 		}
 		break;
 	}
@@ -246,7 +273,7 @@ void Game::moveChar() {
 
 	switch (res) {
 	case 1:
-		if (this->currY + 1 <= rooms.size()) {
+		if (this->currY + 1 <= this->length) {
 			currY += 1;
 			cout << "Moved east" << endl;
 			if (rooms.at(currX).at(currY).hasEvent()) {
@@ -282,7 +309,7 @@ void Game::moveChar() {
 			cout << "The direction you chose doesn't have space to go and you have forfeited your turn." << endl;
 		break;
 	case 4:
-		if (this->currX + 1 >= 0) {
+		if (this->currX + 1 <= this->length) {
 			currX += 1;
 			cout << "Moved south" << endl;
 			if (rooms.at(currX).at(currY).hasEvent()) {
@@ -334,7 +361,6 @@ void Game::endGame(int num) {
 ** Post-Conditions: n/a
 *********************************************************************/
 void Game::encounter(int num) {
-	int tempX = 0, tempY = 0;
 	switch (num) {
 	case 1:
 		cout << "Encountered a pit. You have lost the game." << endl;
@@ -346,15 +372,17 @@ void Game::encounter(int num) {
 		break;
 	case 3:
 		cout << "Encountered a bat. You are being transported to a new cave." << endl;
-		tempX = rand() % this->length;
-		tempY = rand() % this->length;
-		if (rooms.at(tempX).at(tempY).hasEvent()) {
-			this->encounter(rooms.at(tempX).at(tempY).getEvent()->encounter());
+		currX = rand() % this->length;
+		currY = rand() % this->length;
+		if (rooms.at(currX).at(currY).hasEvent()) {
+			this->encounter(rooms.at(currX).at(currY).getEvent()->encounter());
 		}
 		break;
 	case 4:
 		cout << "Encountered gold." << endl;
 		this->hasGold = true;
+		Room r;
+		rooms.at(currX).at(currY) = r;
 		break;
 	}
 }

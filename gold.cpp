@@ -56,3 +56,14 @@ int Gold::encounter() {
 	return 4;
 }
 
+/*********************************************************************
+** Function: getType
+** Description: returns type
+** Parameters: n/a
+** Pre-Conditions: n/a
+** Post-Conditions: n/a
+*********************************************************************/
+int Gold::getType() {
+	return 2;
+}
+

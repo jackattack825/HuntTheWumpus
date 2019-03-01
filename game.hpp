@@ -31,6 +31,7 @@ public:
 	Game(int length);
 
 	void encounter(int num);
+	void checkPercepts();
 	void runGame();
 	void shootArrow();
 	void moveChar();

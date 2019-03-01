@@ -56,3 +56,6 @@ int Wumpus::encounter() {
 	return 2;
 }
 
+int Wumpus::getType() {
+	return 4;
+}

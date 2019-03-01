@@ -23,6 +23,7 @@ public:
 	void setEvent(Event *e);
 	Event* getEvent();
 	bool isWumpus();
+	bool isEmpty();
 };
 
 #endif

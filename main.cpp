@@ -11,6 +11,10 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
+	if (argc < 2) {
+		cout << "Needs an argument" << endl;
+		exit(0);
+	}
 	if (atoi(argv[1]) < 4) {
 		cout << "Size must be at least 4 " << endl;
 		exit(0);

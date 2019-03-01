@@ -55,3 +55,14 @@ bool Pit::isWumpus() {
 int Pit::encounter() {
 	return 1;
 }
+
+/*********************************************************************
+** Function: getType
+** Description: returns type
+** Parameters: n/a
+** Pre-Conditions: n/a
+** Post-Conditions: n/a
+*********************************************************************/
+int Pit::getType() {
+	return 1;
+}

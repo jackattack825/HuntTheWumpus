@@ -76,6 +76,21 @@ void Room::setEvent(Event* e) {
 ** Post-Conditions: n/a
 *********************************************************************/
 bool Room::isWumpus() {
+	if (this->e == NULL)
+		return false;
 	return this->e->isWumpus();
+}
+
+/*********************************************************************
+** Function: isEmpty
+** Description: checks if room is empty
+** Parameters: n/a
+** Pre-Conditions: n/a
+** Post-Conditions: n/a
+*********************************************************************/
+bool Room::isEmpty() {
+	if (this->e == NULL)
+		return true;
+	return false;
 }
 

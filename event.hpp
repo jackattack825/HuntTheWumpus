@@ -21,6 +21,7 @@ public:
 	virtual void getPercept()=0;
 	virtual int encounter()=0; // returns # for event type
 	virtual bool isWumpus() = 0;
+	virtual int getType() = 0;
 };
 
 
